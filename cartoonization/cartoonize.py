@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import network
 import guided_filter
 from tqdm import tqdm
@@ -64,8 +64,8 @@ def cartoonize(load_folder, save_folder, model_path):
                 output = (np.squeeze(output)+1)*127.5
                 output = np.clip(output, 0, 255).astype(np.uint8)
                 cv2.imwrite(save_path, output)
-            except:
-                print('cartoonize {} failed'.format(load_path))
+            except Exception  as e:
+                print('cartoonize {} failed {}'.format(load_path,str(e)))
         count += 1
 
 
