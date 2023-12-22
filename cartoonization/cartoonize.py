@@ -5,23 +5,11 @@ import tensorflow.compat.v1 as tf
 import network
 import guided_filter
 from tqdm import tqdm
-
-
-def resize_crop(image):
-    h, w, c = np.shape(image)
-    if min(h, w) > 720:
-        if h > w:
-            h, w = int(720*h/w), 720
-        else:
-            h, w = 720, int(720*w/h)
-    image = cv2.resize(image, (w, h),
-                       interpolation=cv2.INTER_AREA)
-    h, w = (h//8)*8, (w//8)*8
-    image = image[:h, :w, :]
-    return image
+tf.compat.v1.disable_eager_execution()
 
 
 def cartoonize(load_folder, save_folder, model_path):
+    print(f"cartoonize staring...............")
     input_photo = tf.placeholder(tf.float32, [1, None, None, 3])
     network_out = network.unet_generator(input_photo)
     final_out = guided_filter.guided_filter(
@@ -52,11 +40,10 @@ def cartoonize(load_folder, save_folder, model_path):
         print(f"Iteration {count}")
         for name in tqdm(i):
             try:
-                # print(f"Image name : {name}")
+                print(f"Image name : {name}")
                 load_path = os.path.join(load_folder, name)
                 save_path = os.path.join(save_folder, name)
                 image = cv2.imread(load_path)
-                image = resize_crop(image)
                 batch_image = image.astype(np.float32)/127.5 - 1
                 batch_image = np.expand_dims(batch_image, axis=0)
                 output = sess.run(final_out, feed_dict={

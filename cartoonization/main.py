@@ -77,6 +77,8 @@ if var1==0:
 else:
    print("cartoonize failed")
 
+
+os.system("python upscale.py")
    
    
 os.chdir("./cartoonized_images")
